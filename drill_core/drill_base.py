@@ -253,6 +253,8 @@ class Drill(Integration):
         payload = {"queryType":"SQL", "query":query}
         cur_headers = self.opts['drill_headers'][0]
         cur_headers["Content-type"] = "application/json"
+        mydf = None
+        status = ""
         try:
             r = self.session.post(url, data=json.dumps(payload), headers=cur_headers, verify=self.opts['drill_verify'][0])
             if r.status_code == 200:
@@ -280,9 +282,16 @@ class Drill(Integration):
                                 mydf = None
                     except:
                         status = "Failure: Error Loading JSON records or parsing into dataframe"
+            else:
+                if self.debug:
+                    print("Oops error: Code: %s - Text: %s" % (r.status_code, r.text))
+                status = "Failure: Non - 200 Error - %s - %s" % (r.status_code, r.text)
+                mydf = None
         except Exception as e:
             mydf = None
             str_err = str(e)
+            if self.debug:
+                print("Error: %s" % str(e))
             if self.opts['drill_verbose_errors'][0] == True:
                 status = "Failure - query_error: " + str_err
             else:
@@ -339,6 +348,9 @@ class Drill(Integration):
         if cell is None:
             line = line.replace("\r", "")
             line_handled = self.handleLine(line)
+            if self.debug:
+                print("line: %s" % line)
+                print("cell: %s" % cell)
             if not line_handled: # We based on this we can do custom things for integrations. 
                 if line.lower() == "testintwin":
                     print("You've found the custom testint winning line magic!")
