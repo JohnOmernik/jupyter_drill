@@ -84,7 +84,7 @@ class Drill(Integration):
         else:
             print("%s Not Currently Connected - Resetting All Variables" % self.name_str.capitalize())
         self.mysession = None
-        self.passwd = None
+        self.connect_pass = None
         self.connected = False
 
 
