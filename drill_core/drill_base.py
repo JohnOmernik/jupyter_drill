@@ -357,6 +357,5 @@ class Drill(Integration):
                 else:
                     print("I am sorry, I don't know what you want to do with your line magic, try just %" + self.name_str + "for help options")
         else: # This is run is the cell is not none, thus it's a cell to process  - For us, that means a query
-            cell = cell.replace("\r", "")
             self.handleCell(cell)
 
