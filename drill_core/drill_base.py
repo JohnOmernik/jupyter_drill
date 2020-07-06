@@ -58,7 +58,7 @@ class Drill(Integration):
 
     # Class Init function - Obtain a reference to the get_ipython()
     def __init__(self, shell, pd_display_grid="html", drill_rewrite_host=False, drill_pin_to_ip=False, drill_embedded=False, debug=False, *args, **kwargs):
-        super(Drill, self).__init__(shell, debug)
+        super(Drill, self).__init__(shell, debug=debug, pd_display_grid=pd_display_grid)
         self.debug = debug
 
         self.opts['pd_display_grid'][0] = pd_display_grid
