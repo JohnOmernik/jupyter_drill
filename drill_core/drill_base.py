@@ -57,9 +57,9 @@ class Drill(Integration):
     myopts[name_str + '_last_use'] = ["", "The use (database) statement ran"]
 
     # Class Init function - Obtain a reference to the get_ipython()
-    def __init__(self, shell, pd_display_grid="html", drill_rewrite_host=False, drill_pin_to_ip=False, drill_embedded=False, *args, **kwargs):
-        super(Drill, self).__init__(shell)
-        self.load_env(self.custom_evars)
+    def __init__(self, shell, pd_display_grid="html", drill_rewrite_host=False, drill_pin_to_ip=False, drill_embedded=False, debug=False, *args, **kwargs):
+        self.debug = debug
+        super(Drill, self).__init__(shell, debug)
         self.opts['pd_display_grid'][0] = pd_display_grid
         if pd_display_grid == "qgrid":
             try:
@@ -71,6 +71,7 @@ class Drill(Integration):
         #Add local variables to opts dict
         for k in self.myopts.keys():
             self.opts[k] = self.myopts[k]
+        self.load_env(self.custom_evars)
 
         self.opts['drill_embedded'][0] = drill_embedded
         self.opts['drill_pin_to_ip'][0] = drill_pin_to_ip
