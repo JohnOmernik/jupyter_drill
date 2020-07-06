@@ -58,8 +58,9 @@ class Drill(Integration):
 
     # Class Init function - Obtain a reference to the get_ipython()
     def __init__(self, shell, pd_display_grid="html", drill_rewrite_host=False, drill_pin_to_ip=False, drill_embedded=False, debug=False, *args, **kwargs):
-        self.debug = debug
         super(Drill, self).__init__(shell, debug)
+        self.debug = debug
+
         self.opts['pd_display_grid'][0] = pd_display_grid
         if pd_display_grid == "qgrid":
             try:
