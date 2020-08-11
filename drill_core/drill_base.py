@@ -38,7 +38,7 @@ class Drill(Integration):
     myopts = {} 
     myopts[name_str + '_max_rows'] = [1000, 'Max number of rows to return, will potentially add this to queries']
     myopts[name_str + '_user'] = ["drill", "User to connect with  - Can be set via ENV Var: JUPYTER_" + name_str.upper() + "_USER otherwise will prompt"]
-    myopts[name_str + '_base_url'] = ["http://localhost:8047", "URL to connect to server. Can be set via ENV Var: JUPYTER_" + name_str.upper() + "_BASE_URL"]
+    myopts[name_str + '_base_url'] = ["", "URL to connect to server. Can be set via ENV Var: JUPYTER_" + name_str.upper() + "_BASE_URL"]
     myopts[name_str + '_base_url_host'] = ["", "Hostname of connection derived from base_url"]
     myopts[name_str + '_base_url_port'] = ["", "Port of connection derived from base_url"]
     myopts[name_str + '_base_url_scheme'] = ["", "Scheme of connection derived from base_url"]
@@ -57,7 +57,7 @@ class Drill(Integration):
     myopts[name_str + '_last_use'] = ["", "The use (database) statement ran"]
 
     # Class Init function - Obtain a reference to the get_ipython()
-    def __init__(self, shell, pd_display_grid="html", drill_rewrite_host=False, drill_pin_to_ip=False, drill_embedded=False, debug=False, *args, **kwargs):
+    def __init__(self, shell, pd_display_grid="html", drill_rewrite_host=False, drill_pin_to_ip=False, drill_embedded=False, drill_base_url="", debug=False, *args, **kwargs):
         super(Drill, self).__init__(shell, debug=debug, pd_display_grid=pd_display_grid)
         self.debug = debug
 
@@ -78,6 +78,16 @@ class Drill(Integration):
         self.opts['drill_pin_to_ip'][0] = drill_pin_to_ip
         self.opts['drill_rewrite_host'][0] = drill_rewrite_host
         self.opts['pd_display_grid'][0] = pd_display_grid
+
+
+        if drill_base_url != "":
+            if self.opts[self.name_str + "_base_url"][0] != "":
+                print("Warning: overwriting ENV provided JUPYTER_DRILL_BASE_URL with object instantiated drill_base_url")
+            self.opts[self.name_str + "_base_url"][0] = drill_base_url
+
+        if drill_embedded == True and drill_base_url == "" and self.opts[self.name_str + "_base_url"][0] == "":
+            print("drill_embedded selected and no URL provided: defaulting to http://localhost:8047")
+            self.opts[self.name_str + "_base_url"][0] = "http://localhost:8047"
 
 
     def disconnect(self):
@@ -140,8 +150,7 @@ class Drill(Integration):
         elif self.opts['drill_embedded'][0] == True:
             self.session = requests.Session()
             print("Drill Embedded Selected, sessions will not work!")
-            print("Using http://localhost:8047 as url for embedded mode")
-            myurl = "http://localhost:8047"
+            myurl = self.opts[self.name_str + "_base_url"][0]
             ts1 = myurl.split("://")
             self.opts[self.name_str + '_base_url_scheme'][0] = ts1[0]
             t1 = ts1[1]
