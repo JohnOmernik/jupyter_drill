@@ -76,6 +76,19 @@ class Drill(Integration):
                 
         self.parse_instances()
 
+    def req_password(self, instance):
+        opts = None
+        retval = True
+        try:
+            opts = self.instances[instance]['options']
+        except:
+            print("Instance %s options not found" % instance)
+        try:
+            if opts['drill_embedded'] == 1:
+                retval = False
+        except:
+            pass
+        return retval
 
     def customAuth(self, instance):
         result = -1
