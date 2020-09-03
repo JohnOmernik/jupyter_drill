@@ -1,7 +1,2 @@
-build/
-build/*
+bulld/*
 build/**
-/build
-/build/
-/build/*
-/build/**
