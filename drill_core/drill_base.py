@@ -29,6 +29,7 @@ class Drill(Integration):
     # Static Variables
     # The name of the integration
     name_str = "drill"
+    instances = {} 
     custom_evars = ['drill_conn_default']
     # These are the variables in the opts dict that allowed to be set by the user. These are specific to this custom integration and are joined
     # with the base_allowed_set_opts from the integration base
