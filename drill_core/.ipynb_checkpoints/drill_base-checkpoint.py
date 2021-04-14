@@ -33,7 +33,7 @@ class Drill(Integration):
     custom_evars = ['drill_conn_default']
     # These are the variables in the opts dict that allowed to be set by the user. These are specific to this custom integration and are joined
     # with the base_allowed_set_opts from the integration base
-    custom_allowed_set_opts = ['drill_max_rows', 'drill_conn_default', 'drill_verify', 'drill_ignore_ssl_warn', 'drill_verbose_errors'] 
+    custom_allowed_set_opts = ['drill_max_rows', 'drill_conn_default', 'drill_verify', 'drill_ignore_ssl_warn', 'drill_verbose_errors', 'drill_embedded'] 
 
     myopts = {} 
     myopts['drill_max_rows'] = [1000, 'Max number of rows to return, will potentially add this to queries']
@@ -43,21 +43,38 @@ class Drill(Integration):
     myopts['drill_verify'] = ['/etc/ssl/certs/ca-certificates.crt', "Either the path to the CA Cert validation bundle or False for don't verify"]
     myopts['drill_ignore_ssl_warn'] = [0, "Supress SSL warning upon connection - Not recommended"]
     myopts['drill_verbose_errors'] = [0, "Show more verbose errors if available"]
+    myopts['drill_embedded'] = [0, "Connect without username/password and without sessions"]
 
 #    myopts[name_str + '_user'] = ["drill", "User to connect with  - Can be set via ENV Var: JUPYTER_" + name_str.upper() + "_USER otherwise will prompt"]
 #    myopts[name_str + '_base_url_host'] = ["", "Hostname of connection derived from base_url"]
 #    myopts[name_str + '_base_url_port'] = ["", "Port of connection derived from base_url"]
 #    myopts[name_str + '_base_url_scheme'] = ["", "Scheme of connection derived from base_url"]
 
-    def __init__(self, shell, debug=False, *args, **kwargs):
-        super(Drill, self).__init__(shell, debug=debug)
+
+
+    # Class Init function - Obtain a reference to the get_ipython()
+    def __init__(self, shell, pd_display_grid="html", drill_conn_url_default="", debug=False, *args, **kwargs):
+        super(Drill, self).__init__(shell, debug=debug, pd_display_grid=pd_display_grid)
         self.debug = debug
+
+        self.opts['pd_display_grid'][0] = pd_display_grid
+        if pd_display_grid == "qgrid":
+            try:
+                import qgrid
+            except:
+                print ("WARNING - QGRID SUPPORT FAILED - defaulting to html")
+                self.opts['pd_display_grid'][0] = "html"
 
         #Add local variables to opts dict
         for k in self.myopts.keys():
             self.opts[k] = self.myopts[k]
 
         self.load_env(self.custom_evars)
+        if drill_conn_url_default != "":
+            if "default" in self.instances.keys():
+                print("Warning: default instance in ENV and passed to class creation - overwriting ENV")
+            self.fill_instance("default", drill_conn_url_default)
+                
         self.parse_instances()
 
     def req_password(self, instance):
@@ -238,31 +255,9 @@ class Drill(Integration):
         return mydf, status
 
 # Display Help can be customized
-    def customOldHelp(self):
+    def customHelp(self):
         self.displayIntegrationHelp()
         self.displayQueryHelp("select * from dfs.`mydatabase`.`mytable`")
-
-    def retCustomDesc(self):
-        return "Jupyter integration for working with Apache Drill datassource"
-
-
-    def customHelp(self, curout):
-        n = self.name_str
-        mn = self.magic_name
-        m = "%" + mn
-        mq = "%" + m
-        table_header = "| Magic | Description |\n"
-        table_header += "| -------- | ----- |\n"
-        out = curout
-        qexamples = []
-        qexamples.append(["myinstance", "select * from dfs.`mydatabase`.`mytable`", "Run a basic SQL query against the Drill instance myinstance"])
-        qexamples.append(["", "select * from dfs.`mydatabase`.`mytable`", "Run a basic SQL query against the default instance of Drill"])
-        out += self.retQueryHelp(qexamples)
-
-        return out
-
-
-
 
 
     # This is the magic name.
