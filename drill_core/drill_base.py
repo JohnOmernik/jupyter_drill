@@ -19,7 +19,7 @@ import socket
 from requests.packages.urllib3.exceptions import SubjectAltNameWarning, InsecureRequestWarning
 #from requests_toolbelt.adapters import host_header_ssl
 requests.packages.urllib3.disable_warnings(SubjectAltNameWarning)
-
+import jupyter_integrations_utility as jiu
 #import IPython.display
 from IPython.display import display_html, display, Javascript, FileLink, FileLinks, Image
 import ipywidgets as widgets
