@@ -109,10 +109,9 @@ class Drill(Integration):
     
                 # Create the user/pass string
                 mypass = ""
-                if inst['connect_pass'] is None:
-                    mypass = self.instances[self.opts[self.name_str + "_conn_default"][0]]['connect_pass']
-                else:
-                    mypass = inst['connect_pass']
+                if inst['enc_pass'] is not None:
+                    mypass = self.ret_dec_pass(inst['enc_pass'])
+                    inst['connect_pass'] = ""
 
                 login = {'j_username': inst['user'], 'j_password': mypass}
  
