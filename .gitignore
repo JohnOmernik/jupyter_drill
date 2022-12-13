@@ -1,2 +1,16 @@
 bulld/*
 build/**
+__pycache__
+__pycache__/*
+__pycache__/**
+*/__pycache__
+**/__pycache__
+jupyter_drill.egg-info
+jupyter_drill.egg-info/*
+jupyter_drill.egg-info/**
+dist
+dist/*
+dist/**
+build
+
+
