@@ -159,7 +159,7 @@ class Drill(Integration):
             bReRun = True
         # Ok, we know if we are rerun or not, so let's now set the last_query (and last use if needed) 
         self.instances[instance]['last_query'] = query
-        self.instances[instance]['last_query_ts'] int(time.time())
+        self.instances[instance]['last_query_ts'] = int(time.time())
         if query.strip().find("use ") == 0:
             self.instances[instance]['last_use'] = query
 
