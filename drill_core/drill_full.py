@@ -157,12 +157,6 @@ class Drill(Integration):
         if self.instances[instance]['last_query'] == query:
             # If the validation allows rerun, that we are here:
             bReRun = True
-        # Ok, we know if we are rerun or not, so let's now set the last_query (and last use if needed) 
-        self.instances[instance]['last_query'] = query
-        self.instances[instance]['last_query_ts'] = int(time.time())
-        if query.strip().find("use ") == 0:
-            self.instances[instance]['last_use'] = query
-
 
         # Example Validation
 
